@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basico Branco — Content Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="layout">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="brand-name">Basico Branco</span>
+        <span class="brand-sub">Content Analytics</span>
+      </div>
+      <div class="topbar-right">
+        <span class="badge-period" id="period-label">Last 30 days</span>
+        <span class="last-updated">Updated <span id="last-updated-time">—</span></span>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls-bar">
+      <div class="btn-group" id="platform-btns">
+        <button class="btn-filter active" data-value="all">All</button>
+        <button class="btn-filter" data-value="instagram">Instagram</button>
+        <button class="btn-filter" data-value="youtube">YouTube</button>
+      </div>
+      <div class="btn-group" id="range-btns">
+        <button class="btn-filter" data-value="7">7d</button>
+        <button class="btn-filter" data-value="14">14d</button>
+        <button class="btn-filter active" data-value="30">30d</button>
+        <button class="btn-filter" data-value="90">90d</button>
+      </div>
+    </div>
+
+    <!-- KPI Grid -->
+    <section class="kpi-grid">
+
+      <!-- Views -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Views</span>
+          <span class="kpi-delta" id="delta-views"></span>
+        </div>
+        <div class="kpi-value" id="val-views">—</div>
+        <div class="kpi-chart">
+          <canvas id="spark-views"></canvas>
+        </div>
+      </div>
+
+      <!-- Reach -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Reach</span>
+          <span class="kpi-delta" id="delta-reach"></span>
+        </div>
+        <div class="kpi-value" id="val-reach">—</div>
+        <div class="kpi-chart">
+          <canvas id="spark-reach"></canvas>
+        </div>
+      </div>
+
+      <!-- Engagement Rate -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Engagement Rate</span>
+          <span class="kpi-delta" id="delta-engagement_rate"></span>
+        </div>
+        <div class="kpi-value" id="val-engagement_rate">—</div>
+        <div class="kpi-chart">
+          <canvas id="spark-engagement_rate"></canvas>
+        </div>
+      </div>
+
+      <!-- Followers -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Followers</span>
+          <span class="kpi-delta" id="delta-followers"></span>
+        </div>
+        <div class="kpi-value" id="val-followers">—</div>
+        <div class="kpi-chart">
+          <canvas id="spark-followers"></canvas>
+        </div>
+      </div>
+
+      <!-- Shares -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Shares</span>
+          <span class="kpi-delta" id="delta-shares"></span>
+        </div>
+        <div class="kpi-value" id="val-shares">—</div>
+        <div class="kpi-chart">
+          <canvas id="spark-shares"></canvas>
+        </div>
+      </div>
+
+      <!-- Saves -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Saves</span>
+          <span class="kpi-delta" id="delta-saves"></span>
+        </div>
+        <div class="kpi-value" id="val-saves">—</div>
+        <div class="kpi-chart">
+          <canvas id="spark-saves"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+
+      <!-- Views & Reach Area Chart -->
+      <div class="chart-card chart-main">
+        <div class="chart-header">
+          <span class="chart-title">Views &amp; Reach</span>
+          <div class="chart-legend">
+            <span class="legend-dot" style="background:#6366f1;"></span>
+            <span>Views</span>
+            <span class="legend-dot" style="background:#0ea5e9; margin-left:12px;"></span>
+            <span>Reach</span>
+          </div>
+        </div>
+        <div class="chart-body">
+          <canvas id="chart-views-reach"></canvas>
+        </div>
+      </div>
+
+      <!-- Engagement Breakdown Bar Chart -->
+      <div class="chart-card chart-side">
+        <div class="chart-header">
+          <span class="chart-title">Engagement Breakdown</span>
+          <div class="chart-legend">
+            <span class="legend-dot" style="background:#ec4899;"></span>
+            <span>Likes</span>
+            <span class="legend-dot" style="background:#f59e0b; margin-left:8px;"></span>
+            <span>Comments</span>
+            <span class="legend-dot" style="background:#10b981; margin-left:8px;"></span>
+            <span>Shares</span>
+            <span class="legend-dot" style="background:#8b5cf6; margin-left:8px;"></span>
+            <span>Saves</span>
+          </div>
+        </div>
+        <div class="chart-body">
+          <canvas id="chart-engagement"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Top Posts -->
+    <section class="posts-section">
+      <div class="section-header">
+        <span class="section-title">Top Posts</span>
+        <div class="select-wrap">
+          <select id="posts-sort" class="select">
+            <option value="views">Sort: Views</option>
+            <option value="likes">Sort: Likes</option>
+            <option value="shares">Sort: Shares</option>
+            <option value="engagement_rate">Sort: Engagement Rate</option>
+          </select>
+        </div>
+      </div>
+      <div class="posts-grid" id="posts-grid">
+        <!-- Post cards rendered by dashboard.js -->
+        <div class="post-card skeleton"></div>
+        <div class="post-card skeleton"></div>
+        <div class="post-card skeleton"></div>
+        <div class="post-card skeleton"></div>
+        <div class="post-card skeleton"></div>
+        <div class="post-card skeleton"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
