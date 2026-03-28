@@ -16,6 +16,9 @@ const PORT = process.env.PORT || 3000;
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
+  max: 1,                       // keep connection count low in serverless
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 10000,
 });
 
 // Serve static files from public/
