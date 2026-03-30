@@ -284,6 +284,12 @@ app.get('/api/posts', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Dashboard running at http://localhost:${PORT}`);
-});
+// Export for Vercel serverless
+export default app;
+
+// Local dev only
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Dashboard running at http://localhost:${PORT}`);
+  });
+}
