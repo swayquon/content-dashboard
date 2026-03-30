@@ -29,22 +29,63 @@ function isTableMissingError(err) {
   return err.code === '42P01';
 }
 
+// In-memory cache for the refreshed Instagram token
+let _igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+
+// Refresh the Instagram long-lived token on startup so it never silently expires
+async function refreshInstagramToken() {
+  try {
+    const { data } = await axios.get('https://graph.facebook.com/v21.0/oauth/access_token', {
+      params: {
+        grant_type: 'fb_exchange_token',
+        client_id: process.env.INSTAGRAM_APP_ID,
+        client_secret: process.env.INSTAGRAM_APP_SECRET,
+        fb_exchange_token: _igToken,
+      },
+      timeout: 8000,
+    });
+    if (data.access_token) {
+      _igToken = data.access_token;
+      console.log('Instagram token refreshed. Expires in', Math.round(data.expires_in / 86400), 'days');
+    }
+  } catch (e) {
+    console.warn('Instagram token refresh failed:', e.response?.data?.error?.message ?? e.message);
+  }
+}
+refreshInstagramToken();
+
 // Fetch Instagram followers
 async function fetchInstagramFollowers() {
+  // Allow a manual override via env var when the Graph API is blocked
+  if (process.env.INSTAGRAM_FOLLOWERS) {
+    return parseInt(process.env.INSTAGRAM_FOLLOWERS);
+  }
+
   try {
     const { data } = await axios.get(
       `https://graph.facebook.com/v21.0/${process.env.INSTAGRAM_ACCOUNT_ID}`,
       {
         params: {
           fields: 'followers_count',
-          access_token: process.env.INSTAGRAM_ACCESS_TOKEN,
+          access_token: _igToken,
         },
         timeout: 5000,
       }
     );
     return data.followers_count ?? null;
   } catch (e) {
-    console.warn('Instagram followers fetch failed:', e.message);
+    const apiErr = e.response?.data?.error;
+    if (apiErr?.code === 200) {
+      // Code 200 = permission/app-level block — only log once, not every request
+      console.warn(
+        'Instagram API blocked (code 200). Your Meta App may need:\n' +
+        '  1. The "Instagram" product added at developers.facebook.com → your app → Add Product\n' +
+        '  2. Your account added as an Instagram Tester (if app is still in Development mode)\n' +
+        '  3. Or set INSTAGRAM_FOLLOWERS=<count> in your .env as a manual override'
+      );
+    } else {
+      console.warn('Instagram followers fetch failed:', apiErr?.message ?? e.message);
+    }
     return null;
   }
 }
